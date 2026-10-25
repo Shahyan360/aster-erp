@@ -1,0 +1,26 @@
+<div class="gl">
+    <!-- White header + filters band -->
+    <div class="-mt-4 -mx-8 bg-white">
+        <app-ledger-header (action)="onAction($event)" />
+        <app-ledger-filters (apply)="onApply($event)" (resetFilters)="onReset()" />
+    </div>
+
+    <!-- Summary cards -->
+    <app-ledger-cards class="block mt-5" [totalDebit]="totalDebit()" [totalCredit]="totalCredit()" [netMovement]="netMovement()" [entryCount]="entryCount()" />
+
+    @if(summary(); as s){
+    <div class="demo-banner">
+        <span>Opening balance · PKR <strong>{{s.openingBalance | number:"1.2-2"}}</strong></span
+        ><span>Closing balance · PKR <strong>{{s.closingBalance | number:"1.2-2"}}</strong></span>
+    </div>
+    }
+    <!-- Transactions table -->
+    <app-ledger-table class="block mt-5" [transactions]="filteredTransactions()" [entryCount]="entryCount()" [searchTerm]="searchTerm()" [loading]="loading()" (searchTermChange)="searchTerm.set($event)" />
+    <nav class="ledger-pagination" aria-label="Ledger pages">
+        <span>Page {{pageNumber}} of {{pageCount()}} · {{totalCount()}} total entries · Search applies to this page</span>
+        <div>
+            <button class="action-secondary" type="button" (click)="changePage(-1)" [disabled]="pageNumber<=1 || loading()">Previous</button
+            ><button class="action-secondary" type="button" (click)="changePage(1)" [disabled]="pageNumber>=pageCount() || loading()">Next</button>
+        </div>
+    </nav>
+</div>

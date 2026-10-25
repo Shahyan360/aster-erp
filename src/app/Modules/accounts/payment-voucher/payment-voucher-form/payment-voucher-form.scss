@@ -1,0 +1,44 @@
+:host {
+    display: block;
+}
+
+.pv-form-header {
+    // Prevent horizontal scroll from the full-bleed negative margin on narrow viewports.
+    max-width: 100vw;
+}
+
+.pv-form-actions {
+    row-gap: 0.5rem;
+}
+
+.pv-form-btn,
+.pv-form-checkbox {
+    min-height: 2.25rem;
+}
+
+// Make FloatLabel wrappers and the PrimeNG controls span the full grid cell.
+:host ::ng-deep {
+    p-floatlabel,
+    .p-floatlabel {
+        display: block;
+        width: 100%;
+    }
+
+    p-select,
+    p-datepicker,
+    p-inputnumber {
+        width: 100%;
+    }
+
+    .p-select,
+    .p-datepicker,
+    .p-inputnumber,
+    .p-inputnumber .p-inputnumber-input,
+    .p-datepicker .p-inputtext {
+        width: 100%;
+    }
+
+    input[pInputText] {
+        width: 100%;
+    }
+}

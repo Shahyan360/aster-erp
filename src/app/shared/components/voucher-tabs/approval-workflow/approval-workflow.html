@@ -1,0 +1,102 @@
+@if (loading()) {
+    <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+        <i class="pi pi-spin pi-spinner text-2xl"></i>
+        <p class="mt-2 text-sm">Loading approval workflow…</p>
+    </div>
+} @else if (error()) {
+    <div class="flex flex-col items-center justify-center py-12 text-center">
+        <i class="pi pi-exclamation-triangle text-2xl text-red-500"></i>
+        <p class="mt-2 text-sm text-gray-700">{{ error() }}</p>
+    </div>
+} @else if (!workflow()?.rows?.length) {
+    <div class="flex flex-col items-center justify-center text-center py-12 text-gray-400">
+        <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-3">
+            <i class="pi pi-sitemap text-xl"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-600">No approval steps</p>
+        <p class="text-xs mt-1">No workflow is configured for this voucher amount.</p>
+    </div>
+} @else if (workflow(); as wf) {
+    @if (wf.overallStatus || wf.referenceDocNo) {
+        <div class="flex flex-wrap items-center gap-4 mb-4 text-sm">
+            @if (wf.referenceDocNo) {
+                <div>
+                    <span class="text-gray-500">Document:</span>
+                    <span class="ml-1 font-medium text-gray-800">{{ wf.referenceDocNo }}</span>
+                </div>
+            }
+            @if (wf.overallStatus) {
+                <div>
+                    <span class="text-gray-500">Overall status:</span>
+                    <span class="ml-1 font-medium text-gray-800">{{ formatStatus(wf.overallStatus) }}</span>
+                </div>
+            }
+            @if (wf.mode) {
+                <div>
+                    <span class="text-gray-500">Mode:</span>
+                    <span class="ml-1 font-medium capitalize text-gray-800">{{ wf.mode }}</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="w-full text-sm approval-table">
+            <thead>
+                <tr class="bg-gray-50 text-gray-500 border-b border-gray-200">
+                    <th class="py-2.5 px-4 text-left font-medium w-16">#</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Level</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Assigned To</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Type</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Amount Range</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Status</th>
+                    <th class="py-2.5 px-4 text-left font-medium">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of wf.rows; track row.level + row.assignedUserId; let i = $index) {
+                    <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50/60">
+                        <td class="py-3 px-4 text-gray-400">{{ i + 1 }}</td>
+                        <td class="py-3 px-4">
+                            <span class="font-medium text-gray-800">{{ row.level }}</span>
+                            <span class="flex flex-wrap gap-1 mt-1">
+                                @if (row.isMandatory) {
+                                    <span class="approval-badge approval-badge--mandatory">Mandatory</span>
+                                }
+                                @if (row.isFinal) {
+                                    <span class="approval-badge approval-badge--final">Final</span>
+                                }
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-gray-800">{{ row.assignedUser || '—' }}</span>
+                            @if (row.assignedUserEmail) {
+                                <span class="block text-xs text-gray-400">{{ row.assignedUserEmail }}</span>
+                            }
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">{{ row.approvalType }}</td>
+                        <td class="py-3 px-4 text-gray-600 whitespace-nowrap">{{ amountRange(row) }}</td>
+                        <td class="py-3 px-4">
+                            <span class="approval-status" [ngClass]="statusClass(row.status)">
+                                {{ formatStatus(row.status) }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">
+                            @if (row.actionBy) {
+                                <span class="block">{{ row.actionBy }}</span>
+                                @if (row.actionDate) {
+                                    <span class="block text-xs text-gray-400">{{ row.actionDate | date: 'dd-MMM-yyyy hh:mm a' }}</span>
+                                }
+                            } @else {
+                                <span class="text-gray-400">—</span>
+                            }
+                            @if (row.remarks) {
+                                <span class="block text-xs text-gray-500 mt-0.5">{{ row.remarks }}</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,80 @@
+<section class="workspace-page" aria-labelledby="tb-title">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">REPORTS / FINANCIAL POSITION</p>
+            <h1 id="tb-title">Trial balance</h1>
+            <p class="page-description">Every posted debit and credit, in one reconciled view.</p>
+        </div>
+        @if(demo){<button class="action-secondary print:hidden" (click)="print()"><i class="pi pi-print"></i> Print report</button>}
+    </div>
+    @if(demo){
+    <div class="metric-grid three">
+        <article class="metric-card">
+            <p>Total debit · PKR</p>
+            <h2>{{debit()|number:'1.2-2'}}</h2>
+            <span class="metric-note">All posted demo accounts</span>
+        </article>
+        <article class="metric-card">
+            <p>Total credit · PKR</p>
+            <h2>{{credit()|number:'1.2-2'}}</h2>
+            <span class="metric-note">All posted demo accounts</span>
+        </article>
+        <article class="metric-card">
+            <p>Difference · PKR</p>
+            <h2>{{difference()|number:'1.2-2'}}</h2>
+            <span class="status-pill posted">{{difference()===0?'Balanced':'Out of balance'}}</span>
+        </article>
+    </div>
+    <article class="surface-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Aster Trading · Demo</h2>
+                <p class="subtle-label">Closing balances · current synthetic journal · PKR</p>
+            </div>
+            <label class="search-control print:hidden"><i class="pi pi-search"></i><input aria-label="Search trial balance" placeholder="Search accounts" [ngModel]="search()" (ngModelChange)="search.set($event)" /></label>
+        </div>
+        <div class="table-scroll">
+            <table class="finance-table">
+                <caption class="sr-only">
+                    Synthetic trial balance, excluding draft and submitted vouchers
+                </caption>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Account name</th>
+                        <th class="amount">Debit</th>
+                        <th class="amount">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(a of rows();track a.id){
+                    <tr>
+                        <td class="record-link">{{a.accountCode}}</td>
+                        <td>{{a.accountName}}</td>
+                        <td class="amount">{{a.debit|number:'1.2-2'}}</td>
+                        <td class="amount">{{a.credit|number:'1.2-2'}}</td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="4" class="empty-cell">No matching accounts.</td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">All account totals (independent of search)</th>
+                        <th class="amount">{{debit()|number:'1.2-2'}}</th>
+                        <th class="amount">{{credit()|number:'1.2-2'}}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <p class="panel-footnote">Illustrative report generated from the same balanced journal as General Ledger. Drafts and submissions are excluded. Reversed postings include equal counter-entries. This is not a production reporting engine.</p>
+    </article>
+    } @else {
+    <article class="surface-panel empty-panel">
+        <h2>Live Trial Balance is not connected</h2>
+        <p>No Trial Balance backend endpoint exists in this frontend's service contract. Configure and integrate your own reporting API to enable this report.</p>
+    </article>
+    }
+</section>

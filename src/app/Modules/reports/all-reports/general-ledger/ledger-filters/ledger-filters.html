@@ -1,0 +1,62 @@
+<div class="px-8 py-4 border-t border-gray-100">
+    <button type="button" (click)="toggleFilters()" class="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+        <i class="pi text-xs" [ngClass]="filtersOpen() ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+        {{ filtersOpen() ? 'Hide Filters' : 'Show Filters' }} @if (filterSummary()) {
+        <span class="text-gray-400 font-normal">| {{ filterSummary() }}</span>
+        }
+    </button>
+
+    @if (filtersOpen()) {
+    <form [formGroup]="filterForm" class="mt-4 bg-gray-50/60 rounded-xl border border-gray-100 p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-x-4 gap-y-4">
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-dateType">Date Type</label>
+                <p-select inputId="ledger-dateType" formControlName="dateType" [options]="dateTypes" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
+            </div>
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-fromDate">From Date</label>
+                <p-datepicker inputId="ledger-fromDate" formControlName="fromDate" dateFormat="mm/dd/yy" [showIcon]="true" iconDisplay="input" appendTo="body" styleClass="w-full" />
+            </div>
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-toDate">To Date</label>
+                <p-datepicker inputId="ledger-toDate" formControlName="toDate" dateFormat="mm/dd/yy" [showIcon]="true" iconDisplay="input" appendTo="body" styleClass="w-full" />
+            </div>
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-accountId">Bank Account</label>
+                <p-select inputId="ledger-accountId" formControlName="accountId" [options]="accounts()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" appendTo="body" styleClass="w-full" />
+            </div>
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-subLedgerId">Sub Ledger</label>
+                <p-select inputId="ledger-subLedgerId" formControlName="subLedgerId" [options]="subLedgers()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" appendTo="body" styleClass="w-full" />
+            </div>
+            <div class="gl-field">
+                <label class="gl-label" for="ledger-companyId">Company</label>
+                <p-select inputId="ledger-companyId" formControlName="companyId" [options]="companies()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" appendTo="body" styleClass="w-full" />
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between flex-wrap gap-3 mt-4 pt-4 border-t border-gray-200/80">
+            <div class="flex items-center gap-2">
+                <button type="button" (click)="applyFilter()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)] text-sm font-medium text-white hover:bg-[var(--primary-hover)] transition-colors cursor-pointer">
+                    <i class="pi pi-check text-xs"></i> Apply Filter
+                </button>
+                <button type="button" (click)="reset()" class="gl-btn"><i class="pi pi-refresh text-xs"></i> Reset</button>
+            </div>
+
+            <div class="flex items-center gap-5">
+                <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <p-checkbox [ngModel]="showZeroBalances()" (ngModelChange)="showZeroBalances.set($event)" [ngModelOptions]="{ standalone: true }" binary="true" inputId="zeroBal" />
+                    Show Zero Balances
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <p-checkbox [ngModel]="includeFcy()" (ngModelChange)="includeFcy.set($event)" [ngModelOptions]="{ standalone: true }" binary="true" inputId="includeFcy" [disabled]="true" />
+                    Include FCY
+                </label>
+            </div>
+        </div>
+        @if(filterForm.controls.toDate.hasError("dateOrder")){
+        <p role="alert" class="text-sm text-red-600 mt-3">To Date must be on or after From Date.</p>
+        }
+    </form>
+    }
+</div>

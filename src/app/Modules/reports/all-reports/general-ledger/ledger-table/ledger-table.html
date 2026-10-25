@@ -1,0 +1,81 @@
+<div class="bg-white rounded-xl border border-gray-200">
+    <div class="flex items-center justify-between flex-wrap gap-3 px-5 py-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <h5 class="text-sm font-semibold text-gray-800" style="margin: 0">Transactions</h5>
+            <span class="text-[11px] font-medium text-gray-500 bg-gray-100 rounded-full px-2.5 py-0.5">{{ entryCount() }} entries</span>
+        </div>
+
+        <div class="relative">
+            <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input
+                type="text"
+                [ngModel]="searchTerm()"
+                (ngModelChange)="searchTermChange.emit($event)"
+                placeholder="Search this page..."
+                aria-label="Search ledger transactions on this page"
+                class="w-56 pl-9 pr-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-sm text-gray-700 placeholder-gray-400 outline-none focus:bg-white focus:border-gray-200 transition-colors"
+            />
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm gl-table">
+            <thead>
+                <tr class="text-gray-400 text-[11px] uppercase tracking-wide border-b border-gray-100 bg-gray-50/60">
+                    <th class="py-3 px-4 text-left font-medium min-w-[130px]">Voucher No / Date</th>
+                    <th class="py-3 px-4 text-left font-medium min-w-[160px]">Account</th>
+                    <th class="py-3 px-4 text-left font-medium min-w-[140px]">Sub Ledger</th>
+                    <th class="py-3 px-4 text-left font-medium min-w-[160px]">Counter Account</th>
+                    <th class="py-3 px-4 text-left font-medium">Reference</th>
+                    <th class="py-3 px-4 text-left font-medium min-w-[220px]">Description</th>
+                    <th class="py-3 px-4 text-right font-medium">Debit</th>
+                    <th class="py-3 px-4 text-right font-medium">Credit</th>
+                    <th class="py-3 px-4 text-right font-medium">Balance</th>
+                    <th class="py-3 px-4 text-center font-medium w-16">Attach</th>
+                    <th class="py-3 px-4 text-left font-medium min-w-[140px]">Company</th>
+                    <th class="py-3 px-4 text-left font-medium">User</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (loading()) {
+                <tr>
+                    <td colspan="12" class="py-12 text-center text-gray-400"><i class="pi pi-spin pi-spinner mr-2"></i> Loading transactions…</td>
+                </tr>
+                } @else { @for (row of transactions(); track row.id) {
+                <tr class="border-b border-gray-50 hover:bg-gray-50/60">
+                    <td class="py-3 px-4 align-top">
+                        <span class="block font-medium text-[var(--primary-color)]">{{ row.voucherNo }}</span>
+                        <span class="block text-xs text-gray-400 mt-0.5">{{ row.date | date: 'yyyy-MM-dd' }}</span>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <span class="block font-medium text-gray-800">{{ row.accountCode }} — {{ row.accountName }}</span>
+                        @if (row.bankTag) {
+                        <span class="block text-xs text-gray-400 mt-0.5">{{ row.bankTag }}</span>
+                        }
+                    </td>
+                    <td class="py-3 px-4 text-gray-700 align-top">{{ row.subLedger }}</td>
+                    <td class="py-3 px-4 text-gray-600 align-top">{{ row.counterAccount }}</td>
+                    <td class="py-3 px-4 text-gray-600 align-top whitespace-nowrap">{{ row.reference || '—' }}</td>
+                    <td class="py-3 px-4 text-gray-600 align-top">{{ row.description }}</td>
+                    <td class="py-3 px-4 text-right text-gray-700 align-top whitespace-nowrap">{{ row.debit ? (row.debit | number: '1.2-2') : '—' }}</td>
+                    <td class="py-3 px-4 text-right text-gray-700 align-top whitespace-nowrap">{{ row.credit ? (row.credit | number: '1.2-2') : '—' }}</td>
+                    <td class="py-3 px-4 text-right font-semibold text-gray-800 align-top whitespace-nowrap">{{ row.balance | number: '1.2-2' }}</td>
+                    <td class="py-3 px-4 text-center align-top">
+                        @if (row.hasAttachment) {
+                        <i class="pi pi-paperclip text-gray-400 text-sm"></i>
+                        } @else {
+                        <span class="text-gray-300">—</span>
+                        }
+                    </td>
+                    <td class="py-3 px-4 text-gray-600 align-top whitespace-nowrap">{{ row.company }}</td>
+                    <td class="py-3 px-4 text-gray-600 align-top whitespace-nowrap">{{ row.user }}</td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="12" class="py-12 text-center text-gray-400">No transactions for the selected filters.</td>
+                </tr>
+                } }
+            </tbody>
+        </table>
+    </div>
+</div>

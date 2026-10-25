@@ -1,0 +1,22 @@
+:host {
+    display: block;
+}
+
+.ledger-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+}
+.ledger-pagination > div {
+    display: flex;
+    gap: 0.5rem;
+}
+.ledger-pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

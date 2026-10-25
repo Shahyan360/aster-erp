@@ -1,0 +1,218 @@
+<div class="pv-print">
+    <!-- Top toolbar — visible on screen only -->
+    <div class="pv-print__toolbar print:hidden">
+        <h4 class="text-base font-semibold text-gray-800" style="margin: 0">Print Preview</h4>
+        <div class="flex items-center gap-2">
+            <button type="button" (click)="close()" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                <i class="pi pi-times text-sm"></i>
+                Close
+            </button>
+            <button
+                type="button"
+                (click)="print()"
+                [disabled]="!report()"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary-color)] text-sm font-medium text-white hover:bg-[var(--primary-hover)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <i class="pi pi-print text-sm"></i>
+                Print
+            </button>
+        </div>
+    </div>
+
+    @if (loading()) {
+    <div class="pv-print__center">
+        <i class="pi pi-spin pi-spinner text-2xl text-gray-400"></i>
+        <p class="mt-2 text-sm text-gray-500">Loading voucher…</p>
+    </div>
+    } @else if (error()) {
+    <div class="pv-print__center">
+        <i class="pi pi-exclamation-triangle text-2xl text-red-500"></i>
+        <p class="mt-2 text-sm text-gray-700">{{ error() }}</p>
+    </div>
+    } @else if (report(); as r) {
+    <article class="pv-print__sheet">
+        <!-- Company header -->
+        <header class="pv-print__company">
+            <div class="pv-print__company-info">
+                <h2 class="pv-print__company-name">{{ r.company.name }}</h2>
+                @if (r.company.address) {
+                <p class="pv-print__company-meta">{{ r.company.address }}</p>
+                } @if (r.company.email) {
+                <p class="pv-print__company-meta">{{ r.company.email }}</p>
+                } @if (r.company.phone) {
+                <p class="pv-print__company-meta">{{ r.company.phone }}</p>
+                }
+            </div>
+            <div class="pv-print__doc-meta">
+                <p class="pv-print__doc-meta-line">
+                    <span>Document #</span>
+                    <strong>{{ r.documentNo }}</strong>
+                </p>
+                <p class="pv-print__doc-meta-line">
+                    <span>Date</span>
+                    <strong>{{ r.docDate | date: 'dd MMM, yyyy' }}</strong>
+                </p>
+                <p class="pv-print__doc-meta-line">
+                    <span>Period</span>
+                    <strong>{{ r.fiscalYearPeriod }}</strong>
+                </p>
+                <p class="pv-print__doc-meta-line">
+                    <span>Status</span>
+                    <strong [class.posted]="r.isPosted">{{ formatStatus(r.status) }}</strong>
+                </p>
+            </div>
+        </header>
+
+        <h1 class="pv-print__title">{{ r.title }}</h1>
+
+        <!-- Header grid -->
+        <section class="pv-print__grid">
+            <div class="pv-print__grid-cell">
+                <p class="pv-print__label">Bank Account</p>
+                <p class="pv-print__value">{{ r.bankAccount }}</p>
+                @if (r.iban) {
+                <p class="pv-print__sub">IBAN: {{ r.iban }}</p>
+                }
+            </div>
+            <div class="pv-print__grid-cell">
+                <p class="pv-print__label">FCY Currency</p>
+                <p class="pv-print__value">{{ r.fcyCurrency }} ({{ r.fcyCurrencySymbol }})</p>
+            </div>
+            <div class="pv-print__grid-cell">
+                <p class="pv-print__label">FCY Exchange Rate</p>
+                <p class="pv-print__value">{{ r.fcyExchangeRate | number: '1.2-4' }}</p>
+            </div>
+        </section>
+
+        @if (r.narration) {
+        <section class="pv-print__remarks">
+            <p class="pv-print__label">Narration</p>
+            <p class="pv-print__remarks-text">{{ r.narration }}</p>
+        </section>
+        }
+
+        <!-- Detail lines -->
+        <section class="pv-print__lines">
+            <table class="pv-print__table">
+                <thead>
+                    <tr>
+                        <th style="width: 2.5rem">#</th>
+                        <th>Account</th>
+                        <th>Sub Ledger</th>
+                        <th>Payee / Narration</th>
+                        <th>Cheque</th>
+                        <th class="num">Debit</th>
+                        <th class="num">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (line of r.lines; track line.rowNo) {
+                    <tr>
+                        <td>{{ line.rowNo }}</td>
+                        <td>
+                            <strong>{{ line.accountName }}</strong>
+                            @if (line.accountCode) {
+                            <div class="pv-print__sub">{{ line.accountCode }}</div>
+                            } @if (line.department || line.paymentMode) {
+                            <div class="pv-print__sub">@if (line.department) { {{ line.department }} } @if (line.department && line.paymentMode) { · } @if (line.paymentMode) { {{ line.paymentMode }} }</div>
+                            }
+                        </td>
+                        <td>{{ line.subLedger || '—' }}</td>
+                        <td>{{ line.payeeNarration || '—' }}</td>
+                        <td>
+                            @if (line.chequeNumber) { {{ line.chequeNumber }} @if (line.chequeDate) {
+                            <div class="pv-print__sub">{{ line.chequeDate | date: 'dd MMM, yyyy' }}</div>
+                            } } @else { — }
+                        </td>
+                        <td class="num">{{ line.debit | number: '1.2-2' }}</td>
+                        <td class="num">{{ line.credit | number: '1.2-2' }}</td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="total-label">Total</td>
+                        <td class="num"><strong>{{ r.totalDebit | number: '1.2-2' }}</strong></td>
+                        <td class="num"><strong>{{ r.totalCredit | number: '1.2-2' }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+
+        <!-- LCY + FCY summaries -->
+        <section class="pv-print__summary-duo">
+            <div class="pv-print__summary">
+                <p class="pv-print__section-title">{{ r.lcy.label }}</p>
+                <div class="pv-print__summary-row">
+                    <span>Gross Amount</span>
+                    <strong>{{ r.lcy.grossAmount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row">
+                    <span>Discount</span>
+                    <strong>{{ r.lcy.discount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row">
+                    <span>Tax Amount</span>
+                    <strong>{{ r.lcy.taxAmount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row pv-print__summary-row--net">
+                    <span>Net Payable</span>
+                    <strong>{{ r.lcy.netPayable | number: '1.2-2' }}</strong>
+                </div>
+            </div>
+            <div class="pv-print__summary">
+                <p class="pv-print__section-title">{{ r.fcy.label }}</p>
+                <div class="pv-print__summary-row">
+                    <span>Gross Amount</span>
+                    <strong>{{ r.fcy.grossAmount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row">
+                    <span>Discount</span>
+                    <strong>{{ r.fcy.discount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row">
+                    <span>Tax Amount</span>
+                    <strong>{{ r.fcy.taxAmount | number: '1.2-2' }}</strong>
+                </div>
+                <div class="pv-print__summary-row pv-print__summary-row--net">
+                    <span>Net Payable</span>
+                    <strong>{{ r.fcy.netPayable | number: '1.2-2' }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Signatures -->
+        <section class="pv-print__signatures">
+            <div class="pv-print__sig">
+                <div class="pv-print__sig-line"></div>
+                <p>Prepared By</p>
+                @if (r.createdByName) {
+                <strong class="pv-print__sig-name">{{ r.createdByName }}</strong>
+                }
+            </div>
+            <div class="pv-print__sig">
+                <div class="pv-print__sig-line"></div>
+                <p>Checked By</p>
+                @if (r.lastModifiedByName) {
+                <strong class="pv-print__sig-name">{{ r.lastModifiedByName }}</strong>
+                }
+            </div>
+            <div class="pv-print__sig">
+                <div class="pv-print__sig-line"></div>
+                <p>Approved By</p>
+                @if (r.approvedByName) {
+                <strong class="pv-print__sig-name">{{ r.approvedByName }}</strong>
+                }
+            </div>
+            <div class="pv-print__sig">
+                <div class="pv-print__sig-line"></div>
+                <p>Received By</p>
+            </div>
+        </section>
+
+        <footer class="pv-print__footer">
+            <span> Generated by Aster ERP · {{ r.generatedOn | date: 'dd MMM, yyyy hh:mm a' }} @if (r.createdOn) { · Created {{ r.createdOn | date: 'dd MMM, yyyy' }} } </span>
+        </footer>
+    </article>
+    }
+</div>

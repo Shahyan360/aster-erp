@@ -1,0 +1,36 @@
+<div class="login-page">
+    <app-login-left-page />
+    <div class="login-page__form-panel">
+        <div class="form-card">
+            <div class="form-card__header">
+                <p class="eyebrow">ASTER ERP</p>
+                <h2 class="form-card__title">{{demo?'Your next great workflow.':'Welcome back.'}}</h2>
+                <p class="form-card__subtitle">{{demo?'A thoughtfully built finance workspace. Take a look around.':'Sign in to your account to continue.'}}</p>
+            </div>
+            <div class="form-card__body">
+                @if(error$|async;as error){<p-message severity="error" [text]="error.message||'Unable to sign in.'" styleClass="w-full mb-4" />} @if(demo){
+                <div class="demo-welcome">
+                    <span class="status-pill posted"><i class="pi pi-check-circle" style="margin-right: 0.4rem"></i> Portfolio sandbox</span>
+                    <h3>Explore with confidence.</h3>
+                    <p>Browse vouchers, review the ledger, and check the trial balance using a fictional company and sample transactions.</p>
+                    <ul>
+                        <li>No account or password needed</li>
+                        <li>Simulated changes in your browser tab</li>
+                        <li>No connection to a real financial system</li>
+                    </ul>
+                </div>
+                <p-button id="explore-demo-btn" label="Explore demo workspace" icon="pi pi-arrow-right" iconPos="right" [fluid]="true" size="large" [loading]="(loading$|async)??false" (onClick)="exploreDemo()" />
+                <p class="demo-privacy">Please use synthetic information only. Reset the demo anytime from the workspace banner.</p>
+                } @else {
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="field"><app-form-field fieldId="email1" label="Email address" type="email" [required]="true" floatVariant="on" formControlName="email" [control]="emailControl" [autofocus]="true" /></div>
+                    <div class="field"><app-form-field fieldId="password1" label="Password" type="password" [required]="true" floatVariant="on" formControlName="password" [control]="passwordControl" /></div>
+                    <p-button id="sign-in-btn" label="Sign in" type="submit" [fluid]="true" size="large" [loading]="(loading$|async)??false" />
+                    <p class="demo-privacy">Need access or a password reset? Contact your workspace administrator.</p>
+                </form>
+                }
+            </div>
+            <p class="login-credit">Aster ERP · Angular + PrimeNG</p>
+        </div>
+    </div>
+</div>

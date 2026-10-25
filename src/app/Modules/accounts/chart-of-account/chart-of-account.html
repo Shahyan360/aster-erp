@@ -1,0 +1,55 @@
+<section class="workspace-page" aria-labelledby="coa-title">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">FINANCE / STRUCTURE</p>
+            <h1 id="coa-title">Chart of accounts</h1>
+            <p class="page-description">A structured foundation for every transaction.</p>
+        </div>
+        <span class="status-pill">Read-only reference</span>
+    </div>
+    @if(demo) {
+    <article class="surface-panel">
+        <div class="panel-heading">
+            <h2>Demo account directory</h2>
+            <label class="search-control"><i class="pi pi-search"></i><input aria-label="Search accounts" placeholder="Search code or name" [ngModel]="search()" (ngModelChange)="search.set($event)" /></label>
+        </div>
+        <div class="table-scroll">
+            <table class="finance-table">
+                <caption class="sr-only">
+                    Synthetic chart of accounts and posted balances
+                </caption>
+                <thead>
+                    <tr>
+                        <th>Account code</th>
+                        <th>Account name</th>
+                        <th>Type</th>
+                        <th class="amount">Debit · PKR</th>
+                        <th class="amount">Credit · PKR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(a of accounts();track a.id){
+                    <tr>
+                        <td class="record-link">{{a.accountCode}}</td>
+                        <td>{{a.accountName}}</td>
+                        <td>{{a.isControlAccount?'Control account':'Posting account'}}</td>
+                        <td class="amount">{{a.debit|number:'1.2-2'}}</td>
+                        <td class="amount">{{a.credit|number:'1.2-2'}}</td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="5" class="empty-cell">No accounts match your search.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="panel-footnote">Synthetic reference data. Account creation and account maintenance require a live backend.</p>
+    </article>
+    } @else {
+    <article class="surface-panel empty-panel">
+        <h2>Account maintenance is not connected</h2>
+        <p>The live application currently provides account lookups for voucher entry. A chart-of-accounts management API is not implemented in this repository.</p>
+    </article>
+    }
+</section>

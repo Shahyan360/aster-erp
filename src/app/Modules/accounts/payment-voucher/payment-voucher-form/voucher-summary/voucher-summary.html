@@ -1,0 +1,103 @@
+<div class="bg-white rounded-xl border border-gray-200 p-5">
+    <!-- Title -->
+    <div class="flex items-center gap-2 mb-4">
+        <span class="w-1.5 h-5 rounded-sm bg-[var(--primary-color)]"></span>
+        <h5 style="margin: 0">Summary</h5>
+    </div>
+
+    <!-- LCY section -->
+    <div class="mt-2">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-semibold text-gray-700 uppercase tracking-wide">LCY</span>
+            <div class="flex-1 h-px bg-gray-200"></div>
+        </div>
+        <div class="flex flex-col gap-3 text-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Net Payable (PKR)</span>
+                <span class="font-semibold text-gray-800">Rs{{ grossAmount | number: lcyFmt }}</span>
+            </div>
+
+            <!-- Discount Account: full width, no caption -->
+            <p-select
+                [options]="discountAccounts()"
+                optionLabel="accountName"
+                optionValue="id"
+                [ngModel]="discountAccountId"
+                (ngModelChange)="onDiscountAccountChange($event)"
+                [filter]="true"
+                [showClear]="true"
+                placeholder="Discount Account"
+                appendTo="body"
+                styleClass="w-full"
+                [disabled]="!canDiscount"
+            />
+
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Discount amount</span>
+                <span class="flex items-center gap-1 font-medium text-gray-600">
+                    Rs
+                    <input
+                        type="number"
+                        [ngModel]="discount"
+                        (ngModelChange)="onDiscountChange($event)"
+                        min="0"
+                        [disabled]="!canDiscount"
+                        [class.bg-gray-50]="!canDiscount"
+                        [class.text-gray-400]="!canDiscount"
+                        [class.cursor-not-allowed]="!canDiscount"
+                        class="w-24 text-right px-2 py-1 bg-white border border-gray-200 rounded-md text-sm text-gray-700 outline-none focus:border-[var(--primary-color)] transition-colors"
+                    />
+                </span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Tax Amount</span>
+                <span class="font-semibold text-gray-800">Rs{{ taxableAmount | number: lcyFmt }}</span>
+            </div>
+
+            <div class="border-t border-gray-100 my-1"></div>
+
+            <div class="flex items-center justify-between">
+                <span class="font-semibold text-[var(--primary-color)]">Gross Amount (PKR)</span>
+                <span class="font-bold text-[var(--primary-color)]">Rs{{ netPayable | number: lcyFmt }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FCY section -->
+    <div class="mt-4">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-semibold text-gray-700 uppercase tracking-wide">FCY</span>
+            <div class="flex-1 h-px bg-gray-200"></div>
+        </div>
+        <div class="flex flex-col gap-3 text-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Net Payable ({{ fcyCode }})</span>
+                <span class="font-semibold text-gray-800">{{ grossAmountFcy | number: fcyFmt }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Discount amount</span>
+                <span class="font-medium text-gray-600">{{ discountFcy | number: fcyFmt }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Tax Amount</span>
+                <span class="font-semibold text-gray-800">{{ taxAmountFcy | number: fcyFmt }}</span>
+            </div>
+
+            <div class="border-t border-gray-100 my-1"></div>
+
+            <div class="flex items-center justify-between">
+                <span class="font-semibold text-[var(--primary-color)]">Gross Amount ({{ fcyCode }})</span>
+                <span class="font-bold text-[var(--primary-color)]">{{ netPayableFcy | number: fcyFmt }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation -->
+    <div class="mt-5 rounded-lg border p-3" [ngClass]="valid ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'">
+        <div class="flex items-center gap-2">
+            <i class="pi" [ngClass]="valid ? 'pi-check-circle text-green-500' : 'pi-exclamation-circle text-amber-500'"></i>
+            <span class="text-sm font-semibold" [ngClass]="valid ? 'text-green-700' : 'text-amber-700'">Validation</span>
+        </div>
+        <p class="text-xs mt-1" [ngClass]="valid ? 'text-green-600' : 'text-amber-600'">{{ validationMessage }}</p>
+    </div>
+</div>
