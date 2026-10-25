@@ -57,7 +57,7 @@ Final clean-install verification completed successfully:
 
 Static HTTP verification passed for a deep report link, normal stylesheet loading under CSP, public demo configuration, security headers, API 404 behavior and retained attribution.
 
-The final source also contains the mobile containment, current-user menu and logout cache refinements. Browser rechecks remain pending as described below.
+The final source also contains the mobile containment, current-user menu and logout cache refinements. Mobile and tablet browser rechecks passed as described below.
 The initial baseline was 2.16 MB initial / 418.21 kB estimated transfer with a
 bundle warning, and 10/14 existing tests passing. The measured bundle reduction
 is approximately 67% raw / 58% estimated transfer. This is a build-size
@@ -77,15 +77,9 @@ Verified in the local production build at 1440px desktop width:
 - No browser console warnings/errors were reported during those flows.
 - Overview, voucher-list and Trial Balance screenshots contain synthetic data.
 
-The 390px check exposed document-level horizontal overflow. CSS containment was
-added; the final browser recheck is still pending. Browser automation then
-stopped because it could not confidently identify an active Windows browser
-URL. No browser actions were continued after that stop.
+Live production verification on https://aster-erp.vercel.app passed for demo login, financial-year selection, overview and balanced Trial Balance. The 390px mobile and 768px tablet report screenshots showed contained, stacked surfaces without a page-level horizontal scrollbar.
 
-Remaining browser checks: mobile overflow recheck, 768px tablet layout, detail-row
-create/submission walkthrough, actual print-view rendering, logout after the last
-cache-cleanup change, and an automated accessibility scan. Unit tests cover the
-underlying simulated operations; they do not substitute for these browser checks.
+Additional browser coverage for detail-row creation/submission, print rendering and an automated accessibility scan remains a follow-up; the underlying simulator has unit coverage. No WCAG conformance claim is made.
 
 ## Security findings and limitations
 
@@ -111,10 +105,10 @@ underlying simulated operations; they do not substitute for these browser checks
 
 ## Publication state
 
-Planned repository: Shahyan360/aster-erp. Planned Vercel project: aster-erp in the
-connected personal account. No public repository or deployment has been created
-during this preparation turn.
+Published with explicit owner approval on 25 October 2026:
+- Public repository: https://github.com/Shahyan360/aster-erp
+- Production demo: https://aster-erp.vercel.app
+- Initial GitHub Actions quality workflow: passed.
+- Vercel source deployment: READY in the personal aster-erp project.
 
-The attached prompt requires final approval of reviewed content before push or
-deployment. Finish the remaining browser checks and approve this reviewed
-snapshot before publication. Never infer or invent a deployment URL.
+The live hosting check identified an Angular API fallback issue. The release follow-up uses explicit routing to reject API paths before static-file and SPA resolution. The runtime is an isolated synthetic sandbox. GitHub automatic deployments are not connected; see PUBLICATION.md and DEPLOYMENT.md.

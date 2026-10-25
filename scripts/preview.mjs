@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(400).end();
         return;
     }
-    for (const header of config.headers.find((h) => h.source === '/(.*)')?.headers ?? []) res.setHeader(header.key, header.value);
+    for (const [key, value] of Object.entries(config.routes.find((route) => route.src === '/(.*)')?.headers ?? {})) res.setHeader(key, value);
     if (!['GET', 'HEAD'].includes(req.method)) {
         res.writeHead(405).end();
         return;

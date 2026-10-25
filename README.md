@@ -4,6 +4,10 @@
 
 **A clear, connected workspace for finance.**
 
+[Live demo](https://aster-erp.vercel.app) · [Quality checks](https://github.com/Shahyan360/aster-erp/actions)
+
+Choose **Explore demo workspace** to enter the public sandbox.
+
 An Angular 21 ERP frontend with an isolated portfolio sandbox: browse payment
 vouchers, explore a General Ledger, and reconcile a synthetic Trial Balance.
 

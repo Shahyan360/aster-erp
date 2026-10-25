@@ -4,47 +4,35 @@
     "installCommand": "npm ci",
     "buildCommand": "npm run build",
     "outputDirectory": "dist/aster-erp/browser",
-    "headers": [
+    "routes": [
         {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "Referrer-Policy",
-                    "value": "strict-origin-when-cross-origin"
-                },
-                {
-                    "key": "Permissions-Policy",
-                    "value": "camera=(), microphone=(), geolocation=()"
-                },
-                {
-                    "key": "Content-Security-Policy",
-                    "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://primefaces.org https://www.primefaces.org https://images.unsplash.com; font-src 'self' data:; connect-src 'self'; frame-src 'self' blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'"
-                }
-            ]
+            "src": "/(.*)",
+            "headers": {
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+                "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+                "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://primefaces.org https://www.primefaces.org https://images.unsplash.com; font-src 'self' data:; connect-src 'self'; frame-src 'self' blob:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'"
+            },
+            "continue": true
         },
         {
-            "source": "/app-config.js",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-store, max-age=0"
-                }
-            ]
-        }
-    ],
-    "rewrites": [
+            "src": "/app-config.js",
+            "headers": {
+                "Cache-Control": "no-store, max-age=0"
+            },
+            "continue": true
+        },
         {
-            "source": "/((?!api(?:/|$)).*)",
-            "destination": "/index.html"
+            "src": "/api(?:/.*)?",
+            "status": 404
+        },
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/.*",
+            "dest": "/index.html"
         }
-    ],
-    "trailingSlash": false
+    ]
 }

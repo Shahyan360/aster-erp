@@ -10,7 +10,7 @@ No private API, database, external authentication provider or secret is needed.
 The prepared settings generator rejects malformed mode values and API URLs
 containing credentials, queries or fragments.
 
-SPA rewrites exclude /api, so a missing API never returns the index page as
+Explicit routing returns 404 for /api before filesystem and SPA fallback rules, so a missing API never returns the index page as
 fake JSON. App configuration is served without caching. Security headers include
 nosniff, frame denial, referrer/permissions policies and a Content Security Policy.
 Inline scripts are forbidden; inline styles remain permitted for Angular/PrimeNG.
@@ -37,7 +37,9 @@ establish the behavior of any server implementation.
 The generic quality workflow uses pinned actions and read-only contents access.
 It runs installation, typechecks, lint, source scan, production build, headless
 tests and a runtime dependency audit. It contains no deployment credentials.
-Vercel Git integration can build the production branch after publication.
+The initial release was uploaded through the authenticated Vercel source API.
+GitHub automatic deployment is not connected. Future releases require an explicit
+source deployment, or connecting this repository in the Vercel dashboard.
 A direct source deployment can also be created through the authenticated Vercel
 connection. The released project and scope must be verified before either path.
 
